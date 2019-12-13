@@ -13,6 +13,7 @@ IP2Country is a tool convert ipaddress to country code
 ## Todo
     1. support IPV6
     2. optimization code (use sqlite3 to store ip data)
+    3. add build scripts and deployment (use dockerfile)
     
 
 
