@@ -17,7 +17,7 @@ And I will add more functions and fix code in further when I am free
     1. support IPV6 
     2. optimization code (sqlite3 to store ip data)
     3. add build scripts and deployment (dockerfile)
-    4. add ipaddress Judgement (regexp)
+    4. add ipaddress Judgement (regexp) √
     
 
 
