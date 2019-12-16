@@ -1,7 +1,7 @@
 package update
 
 import (
-	"IP2Country/pkg/utils"
+	"github.com/fumanne/IP2Country/pkg/utils"
 	"io/ioutil"
 	"net/http"
 	"os"

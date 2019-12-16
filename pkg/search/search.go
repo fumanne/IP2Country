@@ -1,8 +1,8 @@
 package search
 
 import (
-	"IP2Country/pkg/update"
-	"IP2Country/pkg/utils"
+	"github.com/fumanne/IP2Country/pkg/update"
+	"github.com/fumanne/IP2Country/pkg/utils"
 	"io/ioutil"
 	"os"
 	"path/filepath"

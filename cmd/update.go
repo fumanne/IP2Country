@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"IP2Country/pkg/update"
+	"github.com/fumanne/IP2Country/pkg/update"
 	"github.com/spf13/cobra"
 )
 

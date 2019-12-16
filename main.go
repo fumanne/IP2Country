@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "IP2Country/cmd"
+import "github.com/fumanne/IP2Country/cmd"
 
 func main() {
   cmd.Execute()

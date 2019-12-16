@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"IP2Country/pkg/search"
+	"github.com/fumanne/IP2Country/pkg/search"
 	"fmt"
 	"github.com/spf13/cobra"
 	"strings"
