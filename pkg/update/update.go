@@ -1,6 +1,7 @@
 package update
 
 import (
+	"database/sql"
 	"github.com/fumanne/IP2Country/pkg/utils"
 	"io/ioutil"
 	"net/http"
@@ -35,27 +36,21 @@ func (r *Region) filename() string {
 	return r.name + ".tsv"
 }
 
-func (r *Region) download(w *sync.WaitGroup) {
+func (r *Region) download(db *sql.DB, w *sync.WaitGroup) {
+
 	defer w.Done()
 	response, err := http.Get(r.url)
 	defer response.Body.Close()
-	if err != nil {
-		panic(err)
-	}
+	utils.Checkerr(err)
 
 	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
+	utils.Checkerr(err)
 
-	home := utils.GetHome()
-	_d := filepath.Join(home, DOWNLOAD)
-	mkdir(_d)
+	//home := utils.GetHome()
+	//_d := filepath.Join(home, DOWNLOAD)
+	mkdir(utils.Locate(DOWNLOAD))
 
-	generate(r.file(), body)
-	//if err := ioutil.WriteFile(r.file(), body, 0644); err != nil {
-	//	panic(err)
-	//}
+	generate(db, body)
 
 }
 
@@ -72,43 +67,38 @@ func NewRegion(name, url string) *Region {
 	}
 }
 
-func merge(total string, file ...string) {
-	fd, err := os.OpenFile(total, os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
-	defer fd.Close()
-	if err != nil {
-		panic(err)
-	}
-	for _, f := range file {
-		rf, err := ioutil.ReadFile(f)
-		if err != nil {
-			panic(err)
-		}
-		if _, err:=fd.Write(rf); err != nil {
-			panic(err)
-		}
-	}
-}
+//func merge(total string, file ...string) {
+//	fd, err := os.OpenFile(total, os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
+//	defer fd.Close()
+//	if err != nil {
+//		panic(err)
+//	}
+//	for _, f := range file {
+//		rf, err := ioutil.ReadFile(f)
+//		if err != nil {
+//			panic(err)
+//		}
+//		if _, err:=fd.Write(rf); err != nil {
+//			panic(err)
+//		}
+//	}
+//}
 
-
-func generate(total string, s []byte) {
-	fd, err := os.OpenFile(total, os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
-	defer fd.Close()
-	if err != nil {
-		panic(err)
-	}
+func generate(db *sql.DB, s []byte) {
+	//mu.Lock()
+	//defer mu.Unlock()
+	stmt, err := db.Prepare("Insert into ip2country (start, end, country) values (?, ?, ?);")
+	utils.Checkerr(err)
 	ss := strings.Split(string(s), "\n")
 	for _, v := range ss {
 		if ! isSkip(v) && isIPFlag(v) {
-			s, e, c := utils.ParseIP(v)
-			// todo: ugly code
-			one := s + "\t" + e + "\t" + c + "\n"
-			if _, err := fd.Write([]byte(one)); err != nil {
-				panic(err)
-			}
+			s, e, c := utils.ParseIPInt(v)
+			_, err := stmt.Exec(s, e, c)
+			utils.Checkerr(err)
 		}
 	}
-}
 
+}
 
 func isSkip(record string) bool {
 	words := strings.Split(record, "|")
@@ -119,8 +109,7 @@ func isSkip(record string) bool {
 	}
 }
 
-
-func isIPFlag(record string)  bool {
+func isIPFlag(record string) bool {
 	words := strings.Split(record, "|")
 	ok, err := regexp.MatchString("^ipv.*$", words[2])
 	if err != nil {
@@ -133,9 +122,11 @@ func isIPFlag(record string)  bool {
 	return true
 }
 
-
 func Do() {
 	wg := &sync.WaitGroup{}
+	//mutex := &sync.Mutex{}
+	Clean()
+	Prepare()
 	// todo: ugly code
 	elem := map[string]string{
 		"afrinic": AFRINIC,
@@ -147,19 +138,17 @@ func Do() {
 	for k, v := range elem {
 		wg.Add(1)
 		r := NewRegion(k, v)
-		go r.download(wg)
+		go r.download(DB, wg)
 	}
-	//fmt.Println("Before Wait")
 	wg.Wait()
-	//fmt.Println("ALL Done")
 	time.Sleep(time.Second * 3)
 
-	// todo:  ugly code
-	home := utils.GetHome()
-	_d := filepath.Join(home, DOWNLOAD)
-	keys := []string{}
-	for k := range elem {
-		keys = append(keys, filepath.Join(_d, k+".tsv"))
-	}
-	merge(filepath.Join(_d, "ip.tsv"), keys...)
+	//// todo:  ugly code
+	//home := utils.GetHome()
+	//_d := filepath.Join(home, DOWNLOAD)
+	//keys := []string{}
+	//for k := range elem {
+	//	keys = append(keys, filepath.Join(_d, k+".tsv"))
+	//}
+	//merge(filepath.Join(_d, "ip.tsv"), keys...)
 }
