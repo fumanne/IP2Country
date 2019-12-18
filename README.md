@@ -9,9 +9,24 @@ And I will add more functions and fix code in further when I am free
 ## Usage
 
 ```
-    $ ip2country update
-    $ ip2country search 196.223.39.2
-      GA
+$ ipcountry -h
+Convert ip address to country code.
+Also it can update ipdata file from internet.
+For example:
+  IP2Country update // update data file
+  IP2Country search 8.8.8.8  // convert address to country code.
+
+Usage:
+  IP2Country [command]
+
+Available Commands:
+  help        Help about any command
+  search      covert ip address to country code
+  update      update data file from internet
+  version     show version of IP2Country
+
+Flags:
+  -h, --help   help for IP2Country
  
 ```   
 ## Todo
