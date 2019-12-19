@@ -14,12 +14,11 @@ import (
 )
 
 const (
-	AFRINIC  = "http://ftp.apnic.net/stats/afrinic/delegated-afrinic-latest"
-	APNIC    = "http://ftp.apnic.net/stats/apnic/delegated-apnic-latest"
-	LACNIC   = "http://ftp.apnic.net/stats/lacnic/delegated-lacnic-latest"
-	RIPENCC  = "http://ftp.apnic.net/stats/ripe-ncc/delegated-ripencc-latest"
-	ARIN     = "http://ftp.apnic.net/stats/arin/delegated-arin-extended-latest"
-	DOWNLOAD = ".IP2Country"
+	AFRINIC = "http://ftp.apnic.net/stats/afrinic/delegated-afrinic-latest"
+	APNIC   = "http://ftp.apnic.net/stats/apnic/delegated-apnic-latest"
+	LACNIC  = "http://ftp.apnic.net/stats/lacnic/delegated-lacnic-latest"
+	RIPENCC = "http://ftp.apnic.net/stats/ripe-ncc/delegated-ripencc-latest"
+	ARIN    = "http://ftp.apnic.net/stats/arin/delegated-arin-extended-latest"
 )
 
 type Region struct {
@@ -29,10 +28,10 @@ type Region struct {
 
 func (r *Region) file() string {
 	home := utils.GetHome()
-	return filepath.Join(home, DOWNLOAD, r.filename())
+	return filepath.Join(home, utils.DOWNLOAD, r.filename())
 }
 
-func (r *Region) filename() string {
+func (r *Region) filename() string {  	// deprecated
 	return r.name + ".tsv"
 }
 
@@ -48,7 +47,7 @@ func (r *Region) download(db *sql.DB, w *sync.WaitGroup) {
 
 	//home := utils.GetHome()
 	//_d := filepath.Join(home, DOWNLOAD)
-	mkdir(utils.Locate(DOWNLOAD))
+	mkdir(utils.Locate(utils.DOWNLOAD))
 
 	generate(db, body)
 
@@ -122,33 +121,26 @@ func isIPFlag(record string) bool {
 	return true
 }
 
-func Do() {
-	wg := &sync.WaitGroup{}
-	//mutex := &sync.Mutex{}
-	Clean()
-	Prepare()
-	// todo: ugly code
-	elem := map[string]string{
-		"afrinic": AFRINIC,
-		"apnic":   APNIC,
-		"arin":    ARIN,
-		"lacnic":  LACNIC,
-		"ripencc": RIPENCC,
+func Do(force bool) {
+	if force || ! utils.IsExist(utils.DBFile) {
+		Clean(utils.DBFile)
+		db, _ := sql.Open("sqlite3", utils.DBFile)
+		Prepare(db)
+		wg := &sync.WaitGroup{}
+		elem := map[string]string{
+			"afrinic": AFRINIC,
+			"apnic":   APNIC,
+			"arin":    ARIN,
+			"lacnic":  LACNIC,
+			"ripencc": RIPENCC,
+		}
+		for k, v := range elem {
+			wg.Add(1)
+			r := NewRegion(k, v)
+			go r.download(db, wg)
+		}
+		wg.Wait()
+		time.Sleep(time.Second * 3)
 	}
-	for k, v := range elem {
-		wg.Add(1)
-		r := NewRegion(k, v)
-		go r.download(DB, wg)
-	}
-	wg.Wait()
-	time.Sleep(time.Second * 3)
 
-	//// todo:  ugly code
-	//home := utils.GetHome()
-	//_d := filepath.Join(home, DOWNLOAD)
-	//keys := []string{}
-	//for k := range elem {
-	//	keys = append(keys, filepath.Join(_d, k+".tsv"))
-	//}
-	//merge(filepath.Join(_d, "ip.tsv"), keys...)
 }

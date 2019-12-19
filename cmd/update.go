@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+
+var force bool
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
@@ -27,12 +29,13 @@ var updateCmd = &cobra.Command{
 	Long: `update data file from internet and cached in $HOME/.IP2Country/`,
 	Run: func(cmd *cobra.Command, args []string) {
 		//fmt.Println("update called")
-		update.Do()
+		update.Do(force)
 
 	},
 }
 
 func init() {
+	updateCmd.Flags().BoolVar(&force,"force", false, "Force Update ip.db")
 	rootCmd.AddCommand(updateCmd)
 
 	// Here you will define your flags and configuration settings.

@@ -4,11 +4,16 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"math/big"
 	"net"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 )
+
+const DOWNLOAD = ".IP2Country"
+
+var DBFile = filepath.Join(Locate(DOWNLOAD), "ip.db")
 
 var IPv4Regexp = "^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
 var IPV6Regexp = `^((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|` +
@@ -100,4 +105,11 @@ func Checkerr(err error) {
 	} else {
 		return
 	}
+}
+
+func IsExist(file string) bool {
+	if _, err:= os.Stat(file); err != nil {
+		return false
+	}
+	return true
 }
