@@ -9,7 +9,7 @@ And I will add more functions and fix code in further when I am free
 ## Usage
 
 ```
-$ ipcountry -h
+$ ip2country -h
 Convert ip address to country code.
 Also it can update ipdata file from internet.
 For example:
@@ -27,6 +27,19 @@ Available Commands:
 
 Flags:
   -h, --help   help for IP2Country
+  
+  
+$ ip2country update --help
+  update data file from internet and cached in $HOME/.IP2Country/
+  
+  Usage:
+    IP2Country update [flags]
+  
+  Flags:
+        --force   Force Update ip.db
+    -h, --help    help for update  
+  
+  
  
 ```   
 ## Todo
