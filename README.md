@@ -9,14 +9,44 @@ And I will add more functions and fix code in further when I am free
 ## Usage
 
 ```
-    ip2country update
-    ip2country search 124.51.25.1
+$ ip2country -h
+Convert ip address to country code.
+Also it can update ipdata file from internet.
+For example:
+  IP2Country update // update data file
+  IP2Country search 8.8.8.8  // convert address to country code.
+
+Usage:
+  IP2Country [command]
+
+Available Commands:
+  help        Help about any command
+  search      covert ip address to country code
+  update      update data file from internet
+  version     show version of IP2Country
+
+Flags:
+  -h, --help   help for IP2Country
+  
+  
+$ ip2country update --help
+  update data file from internet and cached in $HOME/.IP2Country/
+  
+  Usage:
+    IP2Country update [flags]
+  
+  Flags:
+        --force   Force Update ip.db
+    -h, --help    help for update  
+  
+  
  
 ```   
 ## Todo
-    1. support IPV6 
-    2. optimization code (sqlite3 to store ip data)
-    3. add build scripts and deployment (dockerfile)
+    1. support IPV6    x
+    2. optimization code (sqlite3 to store ip data) √
+       2.1 update is too slow, need to optimize   x
+    3. add build scripts and deployment (dockerfile) √
     4. add ipaddress Judgement (regexp) √
     
 
