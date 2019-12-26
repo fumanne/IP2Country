@@ -1,7 +1,6 @@
 package update
 
 import (
-	"database/sql"
 	"github.com/fumanne/IP2Country/pkg/utils"
 	"io/ioutil"
 	"net/http"
@@ -10,7 +9,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"time"
 )
 
 const (
@@ -26,32 +24,58 @@ type Region struct {
 	url  string
 }
 
-func (r *Region) file() string {
-	home := utils.GetHome()
-	return filepath.Join(home, utils.DOWNLOAD, r.filename())
+func (r *Region) file_v4() string {
+	return filepath.Join(utils.GetHome(), utils.DOWNLOAD, r.filename_v4())
 }
 
-func (r *Region) filename() string {  	// deprecated
-	return r.name + ".tsv"
+func (r *Region) file_v6() string {
+	return filepath.Join(utils.GetHome(), utils.DOWNLOAD, r.filename_v6())
 }
 
-func (r *Region) download(db *sql.DB, w *sync.WaitGroup) {
+func (r *Region) filename_v4() string {
+	return utils.IPv4Prefix + r.name + ".tsv"
+}
 
-	defer w.Done()
+func (r *Region) filename_v6() string {
+	return utils.IPv6Prefix + r.name + ".tsv"
+}
+
+func (r *Region) stream() []byte {
 	response, err := http.Get(r.url)
 	defer response.Body.Close()
-	utils.Checkerr(err)
-
+	utils.CheckErr(err)
 	body, err := ioutil.ReadAll(response.Body)
-	utils.Checkerr(err)
-
-	//home := utils.GetHome()
-	//_d := filepath.Join(home, DOWNLOAD)
-	mkdir(utils.Locate(utils.DOWNLOAD))
-
-	generate(db, body)
-
+	utils.CheckErr(err)
+	return body
 }
+
+func (r *Region) generate(wg *sync.WaitGroup) {
+	defer wg.Done()
+	f4, _ := os.OpenFile(r.file_v4(), os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
+	f6, _ := os.OpenFile(r.file_v6(), os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
+	defer f4.Close()
+	defer f6.Close()
+	for _, record := range  strings.Split(string(r.stream()), "\n") {
+		if ! isSkip(record) && isIPFlag(record) {
+			s, e, c := utils.ParseIPInt(record)
+			line := s.String() + "\t" + e.String() +  "\t" + c + "\n"
+			if isV4record(record) {
+				makeFile(f4, line)
+			}
+			if isV6record(record) {
+				makeFile(f6, line)
+			}
+
+		}
+	}
+}
+
+func makeFile(file *os.File, s string) {
+	_, err := file.WriteString(s)
+	utils.CheckErr(err)
+}
+
+
 
 func mkdir(d string) {
 	if err := os.MkdirAll(d, os.ModePerm); err != nil {
@@ -66,38 +90,6 @@ func NewRegion(name, url string) *Region {
 	}
 }
 
-//func merge(total string, file ...string) {
-//	fd, err := os.OpenFile(total, os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
-//	defer fd.Close()
-//	if err != nil {
-//		panic(err)
-//	}
-//	for _, f := range file {
-//		rf, err := ioutil.ReadFile(f)
-//		if err != nil {
-//			panic(err)
-//		}
-//		if _, err:=fd.Write(rf); err != nil {
-//			panic(err)
-//		}
-//	}
-//}
-
-func generate(db *sql.DB, s []byte) {
-	//mu.Lock()
-	//defer mu.Unlock()
-	stmt, err := db.Prepare("Insert into ip2country (start, end, country) values (?, ?, ?);")
-	utils.Checkerr(err)
-	ss := strings.Split(string(s), "\n")
-	for _, v := range ss {
-		if ! isSkip(v) && isIPFlag(v) {
-			s, e, c := utils.ParseIPInt(v)
-			_, err := stmt.Exec(s, e, c)
-			utils.Checkerr(err)
-		}
-	}
-
-}
 
 func isSkip(record string) bool {
 	words := strings.Split(record, "|")
@@ -121,26 +113,44 @@ func isIPFlag(record string) bool {
 	return true
 }
 
-func Do(force bool) {
-	if force || ! utils.IsExist(utils.DBFile) {
-		Clean(utils.DBFile)
-		db, _ := sql.Open("sqlite3", utils.DBFile)
-		Prepare(db)
-		wg := &sync.WaitGroup{}
-		elem := map[string]string{
-			"afrinic": AFRINIC,
-			"apnic":   APNIC,
-			"arin":    ARIN,
-			"lacnic":  LACNIC,
-			"ripencc": RIPENCC,
-		}
-		for k, v := range elem {
-			wg.Add(1)
-			r := NewRegion(k, v)
-			go r.download(db, wg)
-		}
-		wg.Wait()
-		time.Sleep(time.Second * 3)
+
+func isV4record(record string) bool {
+	words := strings.Split(record, "|")
+	ok, _ := regexp.MatchString("^ipv4$", words[2])
+	if ok {
+		return true
+	} else {
+		return false
 	}
+}
+
+func isV6record(record string) bool {
+	words := strings.Split(record, "|")
+	ok, _ := regexp.MatchString("^ipv6$", words[2])
+	if ok {
+		return true
+	} else {
+		return false
+	}
+}
+
+
+
+func Do() {
+	mkdir(utils.Locate(utils.DOWNLOAD))
+	wg := &sync.WaitGroup{}
+	elem := map[string]string{
+		"afrinic": AFRINIC,
+		"apnic":   APNIC,
+		"arin":    ARIN,
+		"lacnic":  LACNIC,
+		"ripencc": RIPENCC,
+	}
+	for k, v := range elem {
+		wg.Add(1)
+		r := NewRegion(k, v)
+		go r.generate(wg)
+	}
+	wg.Wait()
 
 }

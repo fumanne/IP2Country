@@ -15,6 +15,7 @@ Also it can update ipdata file from internet.
 For example:
   IP2Country update // update data file
   IP2Country search 8.8.8.8  // convert address to country code.
+  IP2Country search 2c0f:ff10::12 // convert ipv6 address 
 
 Usage:
   IP2Country [command]
@@ -36,18 +37,17 @@ $ ip2country update --help
     IP2Country update [flags]
   
   Flags:
-        --force   Force Update ip.db
     -h, --help    help for update  
   
   
  
 ```   
-## Todo
-    1. support IPV6    x
-    2. optimization code (sqlite3 to store ip data) √
-       2.1 update is too slow, need to optimize   x
-    3. add build scripts and deployment (dockerfile) √
-    4. add ipaddress Judgement (regexp) √
+## Now
+    1. support IPV6     √
+    2. build scripts    √
+    3. dockerfile deployment    x
+    4. Ipv4 Private Judgement   √
+
     
 
 

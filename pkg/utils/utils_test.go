@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"net"
 	"reflect"
 	"testing"
 )
@@ -15,23 +14,15 @@ func TestIP2long(t *testing.T) {
 
 }
 
-func TestLong2ip(t *testing.T) {
-	longip := int64(15191967)
-	v := reflect.TypeOf(Long2ip(longip))
-	if v.String() == "string" {
-		t.Logf("%d convert ip type is OK", longip)
-	}
-
-}
 
 func TestIsIPv4(t *testing.T) {
 	right := "255.255.252.252"
 	wrong := "fe80::21b:77ff:fbd6:7860"
-	if IsIPv4(net.ParseIP(right)) {
+	if IsIPv4(right) {
 		t.Logf("%s is ipv4", right)
 	}
 
-	if IsIPv4(net.ParseIP(wrong)) {
+	if IsIPv4(wrong) {
 		t.Errorf("%s should not be ipv4", wrong)
 	}
 }
@@ -39,11 +30,11 @@ func TestIsIPv4(t *testing.T) {
 func TestIsIPv6(t *testing.T) {
 	wrong := "255.255.252.252"
 	right := "fe80::21b:77ff:fbd6:7860"
-	if IsIPv6(net.ParseIP(wrong)) {
+	if IsIPv6(wrong) {
 		t.Errorf("%s should not be ipv6", wrong)
 	}
 
-	if IsIPv6(net.ParseIP(right)) {
+	if IsIPv6(right) {
 		t.Logf("%s is ipv6", right)
 	}
 }
