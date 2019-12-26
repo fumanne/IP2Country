@@ -5,6 +5,21 @@ The idea is from other private repository and thanks the author
 Now I rewrite it with golang to public. 
 And I will add more functions and fix code in further when I am free
 
+ 
+## Build 
+
+```
+$ sh build/buildall.sh
+Building darwin
+Building linux
+Building windows
+
+# example:
+$ IP2Country.linux update 
+$ IP2Country.linux search 2c0f:ff10::12
+```
+
+
 
 ## Usage
 
