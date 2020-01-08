@@ -13,7 +13,7 @@ $ go get github.com/fumanne/IP2Country
 $ cd /GOPATH/bin
 $ IP2Country update
 $ IP2Country search 178.134.11.231
-# GE 
+$ GE 
 
 ```
 
