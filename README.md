@@ -5,8 +5,21 @@ The idea is from other private repository and thanks the author
 Now I rewrite it with golang to public. 
 And I will add more functions and fix code in further when I am free
 
+
+## Install
+
+```
+$ go get github.com/fumanne/IP2Country
+$ cd /GOPATH/bin
+$ IP2Country update
+$ IP2Country search 178.134.11.231
+# GE 
+
+```
+
+
  
-## Build 
+## Build From Source
 
 ```
 $ sh build/buildall.sh
