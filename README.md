@@ -57,11 +57,15 @@ $ ip2country update --help
   
  
 ```   
-## Now
-    1. support IPV6     √
-    2. build scripts    √
-    3. dockerfile deployment    x
-    4. Ipv4 Private Judgement   √
+## Feature
+    1. supported IPV6     
+    2. build scripts    
+    3. Private IPv4 fliter
+    
+
+## TODO
+    1. Add context (Timeout) when no country code found
+    2. Optimize code to good performance 
 
     
 
