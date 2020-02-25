@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 func Do(ipAddress string) string {
@@ -18,7 +19,7 @@ func Do(ipAddress string) string {
 		os.Exit(0)
 	}
 
-	if ! utils.IsIP(ipAddress) {
+	if !utils.IsIP(ipAddress) {
 		fmt.Printf("Not A IPaddress Format: %s\n", ipAddress)
 		os.Exit(0)
 	}
@@ -27,7 +28,14 @@ func Do(ipAddress string) string {
 	for _, f := range setFiles(ipAddress) {
 		go search(f, targetInt, ch)
 	}
-	return <-ch
+
+	select {
+	case data := <-ch:
+		return data
+	case <-time.After(time.Second * 15):
+		return ""
+
+	}
 }
 
 func setFiles(IpAddress string) []string {

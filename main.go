@@ -18,5 +18,5 @@ package main
 import "github.com/fumanne/IP2Country/cmd"
 
 func main() {
-  cmd.Execute()
+	cmd.Execute()
 }

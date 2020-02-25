@@ -26,8 +26,8 @@ import (
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "covert ip address to country code",
-	Long: `convert ip address to country code and accepted one ip address`,
-	Args: cobra.MinimumNArgs(1),
+	Long:  `convert ip address to country code and accepted one ip address`,
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		//fmt.Println("search called")
 		fmt.Println(search.Do(strings.Join(args, " ")))

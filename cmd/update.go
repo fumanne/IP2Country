@@ -20,13 +20,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 //var force bool
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update data file from internet",
-	Long: `update data file from internet and cached in $HOME/.IP2Country/`,
+	Long:  `update data file from internet and cached in $HOME/.IP2Country/`,
 	Run: func(cmd *cobra.Command, args []string) {
 		//fmt.Println("update called")
 		update.Do()

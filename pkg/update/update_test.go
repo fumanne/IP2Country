@@ -27,7 +27,6 @@ func TestIsSkip(t *testing.T) {
 	}
 }
 
-
 func TestIsIPFlag(t *testing.T) {
 	correct := "afrinic|GA|ipv4|196.223.39.0|256|20140923|assigned"
 	wrong := "afrinic|GA|Now|196.223.39.0|256|20140923|assigned"
@@ -41,6 +40,3 @@ func TestIsIPFlag(t *testing.T) {
 	}
 
 }
-
-
-

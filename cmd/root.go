@@ -16,38 +16,36 @@ limitations under the License.
 package cmd
 
 import (
-  "fmt"
-  "github.com/spf13/cobra"
-  "os"
+	"fmt"
+	"github.com/spf13/cobra"
+	"os"
 )
-
 
 //var cfgFile string
 
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-  Use:   "IP2Country",
-  Short: "Convert ip address to country code",
-  Long: `Convert ip address to country code.
+	Use:   "IP2Country",
+	Short: "Convert ip address to country code",
+	Long: `Convert ip address to country code.
 Also it can update ipdata file from internet.
 For example:
   IP2Country update // update data file
   IP2Country search 8.8.8.8  // convert address to country code.
   IP2Country search 2c0f:ff10::12 // convert ipv6 address`,
 
-  // Uncomment the following line if your bare application
-  // has an action associated with it:
-  //	Run: func(cmd *cobra.Command, args []string) { },
+	// Uncomment the following line if your bare application
+	// has an action associated with it:
+	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-  if err := rootCmd.Execute(); err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-  }
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 //func init() {
@@ -91,4 +89,3 @@ func Execute() {
 //    fmt.Println("Using config file:", viper.ConfigFileUsed())
 //  }
 //}
-

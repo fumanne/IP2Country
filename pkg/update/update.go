@@ -42,7 +42,7 @@ func (r *Region) filename_v6() string {
 
 func (r *Region) stream() []byte {
 	response, err := http.Get(r.url)
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	utils.CheckErr(err)
 	body, err := ioutil.ReadAll(response.Body)
 	utils.CheckErr(err)
@@ -53,12 +53,12 @@ func (r *Region) generate(wg *sync.WaitGroup) {
 	defer wg.Done()
 	f4, _ := os.OpenFile(r.file_v4(), os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
 	f6, _ := os.OpenFile(r.file_v6(), os.O_RDWR|os.O_TRUNC|os.O_CREATE, os.ModePerm)
-	defer f4.Close()
-	defer f6.Close()
-	for _, record := range  strings.Split(string(r.stream()), "\n") {
-		if ! isSkip(record) && isIPFlag(record) {
+	defer func() { _ = f4.Close() }()
+	defer func() { _ = f6.Close() }()
+	for _, record := range strings.Split(string(r.stream()), "\n") {
+		if !isSkip(record) && isIPFlag(record) {
 			s, e, c := utils.ParseIPInt(record)
-			line := s.String() + "\t" + e.String() +  "\t" + c + "\n"
+			line := s.String() + "\t" + e.String() + "\t" + c + "\n"
 			if isV4record(record) {
 				makeFile(f4, line)
 			}
@@ -75,8 +75,6 @@ func makeFile(file *os.File, s string) {
 	utils.CheckErr(err)
 }
 
-
-
 func mkdir(d string) {
 	if err := os.MkdirAll(d, os.ModePerm); err != nil {
 		panic(err)
@@ -89,7 +87,6 @@ func NewRegion(name, url string) *Region {
 		url:  url,
 	}
 }
-
 
 func isSkip(record string) bool {
 	words := strings.Split(record, "|")
@@ -106,13 +103,12 @@ func isIPFlag(record string) bool {
 	if err != nil {
 		panic(err)
 	}
-	if ! ok {
+	if !ok {
 		return false
 	}
 
 	return true
 }
-
 
 func isV4record(record string) bool {
 	words := strings.Split(record, "|")
@@ -133,8 +129,6 @@ func isV6record(record string) bool {
 		return false
 	}
 }
-
-
 
 func Do() {
 	mkdir(utils.Locate(utils.DOWNLOAD))

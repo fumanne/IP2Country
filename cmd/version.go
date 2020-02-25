@@ -28,7 +28,7 @@ const (
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "show version of IP2Country",
-	Long: `show version of IP2Country`,
+	Long:  `show version of IP2Country`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Version: %s\n", Version)
 	},

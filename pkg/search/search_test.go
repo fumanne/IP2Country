@@ -1,7 +1,6 @@
 package search
 
 import (
-
 	"testing"
 )
 
@@ -14,6 +13,5 @@ func TestDo(t *testing.T) {
 	} else {
 		t.Errorf("Not Match")
 	}
-
 
 }

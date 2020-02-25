@@ -14,7 +14,6 @@ func TestIP2long(t *testing.T) {
 
 }
 
-
 func TestIsIPv4(t *testing.T) {
 	right := "255.255.252.252"
 	wrong := "fe80::21b:77ff:fbd6:7860"

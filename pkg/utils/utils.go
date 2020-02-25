@@ -16,9 +16,7 @@ const (
 	IPv6Prefix = "IPv6_"
 )
 
-
-var PrivateIPRegexp = "^10.*$|^172.16.*$|^192.168.*$|^127.*$"
-
+var PrivateIPRegexp = "^10.*$|^172.(1[6-9]|2[0-9]|3[0-1]).*$|^192.168.*$|^127.*$"
 
 var IPv4Regexp = "^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
 var IPV6Regexp = `^((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|` +
@@ -55,7 +53,7 @@ func Ip2long(ip string) *big.Int {
 func Str2BigInt(ipint string) *big.Int {
 	x := big.NewInt(0)
 	x, ok := x.SetString(ipint, 10)
-	if ! ok {
+	if !ok {
 		panic("Set Ip to Big Int Error")
 	}
 	return x
@@ -123,7 +121,7 @@ func IsPrivate(ip string) bool {
 }
 
 func IsIP(ip string) bool {
-	if ! IsIPv4(ip) && ! IsIPv6(ip) {
+	if !IsIPv4(ip) && !IsIPv6(ip) {
 		return false
 	}
 	return true
