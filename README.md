@@ -73,11 +73,11 @@ $ ip2country update --help
 ## Feature
     1. supported IPV6     
     2. build scripts    
-    3. Private IPv4 fliter
+    3. Private IPv4 filter
     
 
 ## TODO
-    1. Add context (Timeout) when no country code found
+    1. Add context (Timeout) when no country code found (Done)
     2. Optimize code to good performance 
 
     
